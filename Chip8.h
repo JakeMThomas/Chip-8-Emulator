@@ -2,6 +2,7 @@
 // Load Chip 8
 // Emulate Cycle
 
+#include <stdio.h>
 #include <stdint.h>
 
 const int totalMemory =  4096;
@@ -62,8 +63,10 @@ class Chip
 		void OP_Fx33();
 		void OP_Fx55();
 		void OP_Fx65();
+		
 
-		char sprites[totalSprites]
+
+		int sprites[totalSprites]
 		{
 			0xF0, 0x90, 0x90, 0x90, 0xF0,
 			0x20, 0x60, 0x20, 0x20, 0x70,

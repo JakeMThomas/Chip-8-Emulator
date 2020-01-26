@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
+#include <fstream>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -11,6 +13,7 @@
 
 bool Chip::load(const char *file_path)
 {
+	
 	FILE *f = fopen(file_path, "rb");
 	if(f == NULL)
 		return false;
@@ -31,34 +34,14 @@ bool Chip::load(const char *file_path)
     fclose(f);
     
     return true;
-
-	/*
-	// opens the file as a stream of binary and move the file pointer to the end
-	std::ifstream ifs (file_path, std::ios::binary | std::ios::in);
-
-	if(!ifs.is_open)
-		return false;
-	int i;
-	char c;
-	int j = 512;
-	for(i = 0x200; ifs.get(c); i++)
-	{
-		if(j > 4096)
-			return false; // file size too big in memory space
-
-		printf(" %d ", (uint8_t)c);
-		
-		memory[i] = (uint8_t) c;
-		j++;
-	}
-	*/
+	
 }
 
 void Chip::emulateCycle()
 {
 	// fetch opcode
 	int i;
-	opcode = memory[pc] << 8 | memory[pc + 1];
+	int opcode = memory[pc] << 8 | memory[pc + 1];
 
 	switch (opcode & 0xF000)
 	{
@@ -162,7 +145,7 @@ void Chip::emulateCycle()
 					break;
 			}
 			default:
-				printf("\n Unknown op code: %,4X\n", opcode);
+				// printf("\n Unknown op code: %,4X\n", opcode);
 				exit(3);
 			break;
 		}
@@ -198,7 +181,8 @@ void Chip::emulateCycle()
 					OP_Fx65();
 					break;
 				default:
-					printf("\n Unknown op code: %,4X\n", opcode);
+					// printf("\n Unknown op code: %,4X\n", opcode);
+					printf("Error unknown opcode");
 			}
 			break;
 		}
@@ -265,7 +249,7 @@ void drawDisplay(Chip chip, sf::RenderWindow *window)
 int main()
 {
 	Chip chip8;
-	bool flag = chip8.load("Pong(1player).ch8");
+	bool flag = chip8.load("Airplane.ch8");
 
 	if(!flag)
 	{
