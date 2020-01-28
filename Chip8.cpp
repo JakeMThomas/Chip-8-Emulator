@@ -1,20 +1,13 @@
 // Chip 8.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
 #include "Chip8.h"
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <fstream>
-
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-
 
 bool Chip::load(const char *file_path)
 {
 	
-	FILE *f = fopen(file_path, "rb");
+	FILE *f = fopen("PONG", "rb");
 	if(f == NULL)
 		return false;
 	else
@@ -41,13 +34,7 @@ void Chip::emulateCycle()
 {
 	// fetch opcode
 	int i;
-
-
-	uint16_t one = memory[pc] << 8;
-	uint16_t two = memory[pc+1];
 	opcode = memory[pc] << 8 | memory[pc + 1]; 
-	printf("\nPC counter is %u\n", pc);
-	printf("\nOpcode is %u %u = %u \n", one, two, opcode);
 
 	switch (opcode & 0xF000)
 	{
@@ -239,29 +226,21 @@ void updateKeyState(Chip chip)
 }
 void drawDisplay(Chip chip, sf::RenderWindow *window)
 {
-	std::ofstream ofs("test.txt", std::ofstream::out);
-	sf::RectangleShape rec(sf::Vector2f(13,13));
+	sf::RectangleShape rectangle(sf::Vector2f(13,13));
 	int x, y;
 	for(y = 0; y < 32; y++)
 	{
 		for(x = 0; x < 64; x++)
 		{
-			int gfx = chip.graphics[x+(64*y)];
-
-			for(int z = 0; z < totalPixels; z++)
-			{
-				ofs << chip.graphics[z];
-			}
+			int8_t gfx = chip.graphics[x+(64*y)];
 			
-			if(gfx > 0)
+            if(gfx > 0)
 			{
-				rec.setPosition(float(x*13), float(y*13));
-				window->draw(rec);
-			}
+                rectangle.setPosition((float)(x*13), (float)(y*13));
+                window->draw(rectangle);
+            }
 		}
 	}
-
-	ofs.close();
 }
 
 int main()
@@ -278,14 +257,12 @@ int main()
 	// loads window
 	sf::RenderWindow *window = new sf::RenderWindow(sf::VideoMode(640,320), "Chip 8");
 
-	sf::Clock clock;
-	static float refreshSpeed = 1.f/180.f;
-	
 	// limits framerate
 	window->setFramerateLimit(60);
 
-	sf::RectangleShape rec(sf::Vector2f(200,400));
-
+	sf::Clock clock;
+	static float refreshSpeed = 1.f/60.f;
+	
 	// loops while window is open
 	while(window->isOpen())
 	{
@@ -314,13 +291,15 @@ int main()
 			if(chip8.drawFlag)
 			{
 				window->clear();
+
 				drawDisplay(chip8, window);
+				for(int z = 0; z < 2048; z++)
+					printf(" %u ", chip8.graphics[z]);
 				window->display();
 				chip8.drawFlag = false;	
 			}
 			clock.restart();
 		}
-		
 	}
 
 	delete window;

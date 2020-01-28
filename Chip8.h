@@ -20,8 +20,7 @@ class Chip
 	private:
 		//variables
 		uint16_t stack[stackSize];
-		uint16_t sp;
-		
+		uint8_t sp;
 		uint8_t V[registers];
 		uint16_t pc;
 		uint16_t opcode;
@@ -68,7 +67,6 @@ class Chip
 	public:
 		// variables
 		uint8_t memory[totalMemory];
-		
 		uint8_t graphics[totalPixels];
 		uint8_t keys[totalButtons];
 		bool drawFlag;
@@ -104,6 +102,7 @@ class Chip
 			I = 0;
 			delayTimer = 0;
 			soundTimer = 0;
+			drawFlag = true;
 
 			int i;
 			for (i = 0; i < 16; i++)
@@ -123,6 +122,7 @@ class Chip
 				memory[i] = 0;
 			}
 
+			// load font set
 			for(i = 0; i < totalSprites; i++)
 			{
 				memory[i] = sprites[i];

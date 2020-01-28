@@ -254,25 +254,25 @@ void Chip::OP_Cxkk()
 
 void Chip::OP_Dxyn()
 {
-	uint8_t Vx = (opcode & 0x0F00) >> 8;
-	uint8_t Vy = (opcode & 0x00F0) >> 4;
-	uint8_t h = opcode & 0x000F;
+	int16_t Vx = (opcode & 0x0F00) >> 8;
+	int16_t Vy = (opcode & 0x00F0) >> 4;
+	int16_t h = opcode & 0x000F;
 
 	// Wrap if going beyond screen boundaries
-	uint8_t xPos = V[Vx];
-	uint8_t yPos = V[Vy];
+	int16_t xPos = V[Vx];
+	int16_t yPos = V[Vy];
 
 	V[0xF] = 0;
 
 	for (int row = 0; row < h; row++)
 	{
-		uint16_t spriteByte = memory[I + row];
+		int16_t pixel = memory[I + row];
 
 		for (int col = 0; col < 8; col++)
 		{
 			
-			uint8_t spritePixel = spriteByte & (0x80 >> col);
-			uint32_t screenPixel = graphics[(xPos + col+((yPos + row) * 64))];
+			int16_t spritePixel = pixel & (0x80 >> col);
+			int16_t screenPixel = graphics[(xPos + col+((yPos + row) * 64))];
 
 			if(spritePixel != 0)
 			{
