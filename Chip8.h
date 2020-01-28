@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <unistd.h>
 
 const int totalMemory =  4096;
 const int registers = 16;
@@ -20,7 +21,7 @@ class Chip
 		//variables
 		uint16_t stack[stackSize];
 		uint16_t sp;
-		uint8_t memory[totalMemory];
+		
 		uint8_t V[registers];
 		uint16_t pc;
 		uint16_t opcode;
@@ -63,10 +64,19 @@ class Chip
 		void OP_Fx33();
 		void OP_Fx55();
 		void OP_Fx65();
+
+	public:
+		// variables
+		uint8_t memory[totalMemory];
 		
+		uint8_t graphics[totalPixels];
+		uint8_t keys[totalButtons];
+		bool drawFlag;
+		// methods
+		bool load(const char *file_path);
+		void emulateCycle();
 
-
-		int sprites[totalSprites]
+		unsigned char sprites[totalSprites]
 		{
 			0xF0, 0x90, 0x90, 0x90, 0xF0,
 			0x20, 0x60, 0x20, 0x20, 0x70,
@@ -86,17 +96,15 @@ class Chip
 			0xF0, 0x80, 0xF0, 0x80, 0x80
 		};
 
-	public:
-		// variables
-		uint8_t graphics[totalPixels];
-		uint8_t keys[totalButtons];
-		bool flag;
-		// methods
-		bool load(const char *file_path);
-		void emulateCycle();
-
 		Chip()
 		{
+			pc = programCounter;
+			sp = 0;
+			opcode = 0;
+			I = 0;
+			delayTimer = 0;
+			soundTimer = 0;
+
 			int i;
 			for (i = 0; i < 16; i++)
 			{
@@ -110,11 +118,14 @@ class Chip
 				graphics[i] = 0;
 			}
 
-			pc = programCounter;
-			sp = 0;
-			opcode = 0;
-			I = 0;
-			delayTimer = 0;
-			soundTimer = 0;
+			for(i = 0; i < totalMemory; i++)
+			{
+				memory[i] = 0;
+			}
+
+			for(i = 0; i < totalSprites; i++)
+			{
+				memory[i] = sprites[i];
+			}
 		}
 };

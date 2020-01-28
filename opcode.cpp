@@ -11,14 +11,17 @@ void Chip::OP_00E0()
 	{
 		graphics[i] = 0;
 	}
+	drawFlag = true;
+	pc += 2;
 }
 
 // opcode OOEE
 // return froma subroutine
 void Chip::OP_00EE()
 {
-	--sp;
+	sp--;
 	pc = stack[sp];
+	pc += 2;
 }
 
 // opcode 1nnn
@@ -26,7 +29,6 @@ void Chip::OP_00EE()
 void Chip::OP_1nnn()
 {
 	uint16_t address = opcode & 0x0FFF;
-
 	pc = address;
 }
 
@@ -37,7 +39,7 @@ void Chip::OP_2nnn()
 	uint16_t address = opcode & 0x0FFF;
 
 	stack[sp] = pc;
-	++sp;
+	sp++;
 	pc = address;
 }
 
@@ -48,23 +50,33 @@ void Chip::OP_2nnn()
 void Chip::OP_3xkk()
 {
 	uint8_t Vx = (opcode & 0x0F00) >> 8;
-	uint8_t byte = opcode & 0x00FF;
+	uint16_t byte = opcode & 0x00FF;
 
 	if (V[Vx] == byte)
 	{
+		pc += 4;
+	}
+	else
+	{
 		pc += 2;
 	}
+	
 }
 
 void Chip::OP_4xkk()
 {
 	uint8_t Vx = (opcode & 0x0F00) >> 8;
-	uint8_t byte = (opcode & 0x00FF);
+	uint16_t byte = (opcode & 0x00FF);
 
 	if (V[Vx] != byte)
 	{
+		pc += 4;
+	}
+	else
+	{
 		pc += 2;
 	}
+	
 }
 
 void Chip::OP_5xy0()
@@ -74,24 +86,31 @@ void Chip::OP_5xy0()
 
 	if (V[Vx] != V[Vy])
 	{
+		pc += 4;
+	}
+	else
+	{
 		pc += 2;
 	}
+	
 }
 
 void Chip::OP_6xkk()
 {
 	uint8_t Vx = (opcode & 0x0F00) >> 8;
-	uint8_t byte = (opcode & 0x00FF);
+	uint16_t byte = (opcode & 0x00FF);
 
 	V[Vx] = byte;
+	pc += 2;
 }
 
 void Chip::OP_7xkk()
 {
 	uint8_t Vx = (opcode & 0x0F00) >> 8;
-	uint8_t byte = (opcode & 0x00FF);
+	uint16_t byte = (opcode & 0x00FF);
 
 	V[Vx] += byte;
+	pc += 2;
 }
 
 void Chip::OP_8xy0()
@@ -100,6 +119,7 @@ void Chip::OP_8xy0()
 	uint8_t Vy = (opcode && 0x00F0) >> 4;
 
 	V[Vx] = V[Vy];
+	pc += 2;
 }
 
 void Chip::OP_8xy1()
@@ -108,6 +128,7 @@ void Chip::OP_8xy1()
 	uint8_t Vy = (opcode && 0x00F0) >> 4;
 
 	V[Vx] |= V[Vy];
+	pc += 2;
 }
 
 void Chip::OP_8xy2()
@@ -116,6 +137,7 @@ void Chip::OP_8xy2()
 	uint8_t Vy = (opcode & 0x00F0) >> 4;
 
 	V[Vx] &= V[Vy];
+	pc += 2;
 }
 
 void Chip::OP_8xy3()
@@ -124,6 +146,7 @@ void Chip::OP_8xy3()
 	uint8_t Vy = (opcode & 0x00F0) >> 4;
 
 	V[Vx] ^= V[Vy];
+	pc += 2;
 }
 
 void Chip::OP_8xy4()
@@ -139,6 +162,8 @@ void Chip::OP_8xy4()
 		V[0xF] = 0;
 
 	V[Vx] = sum & 0xFF;
+
+	pc += 2;
 }
 
 void Chip::OP_8xy5()
@@ -152,6 +177,7 @@ void Chip::OP_8xy5()
 		V[0xF] = 0;
 
 	V[Vx] -= V[Vy];
+	pc += 2;
 }
 
 void Chip::OP_8xy6()
@@ -161,6 +187,7 @@ void Chip::OP_8xy6()
 	V[0xF] = (V[Vx] & 0x1);
 
 	V[Vx] >>= 1;
+	pc += 2;
 }
 
 void Chip::OP_8xy7()
@@ -174,6 +201,7 @@ void Chip::OP_8xy7()
 		V[0xF] = 0;
 
 	V[Vx] = V[Vy] - V[Vx];
+	pc += 2;
 }
 
 void Chip::OP_8xyE()
@@ -183,6 +211,7 @@ void Chip::OP_8xyE()
 	V[0xF] = (V[Vx] & 0x80) >> 7;
 
 	V[Vx] <<= 1;
+	pc += 2;
 }
 
 void Chip::OP_9xy0()
@@ -191,7 +220,10 @@ void Chip::OP_9xy0()
 	uint8_t Vy = (opcode & 0x00F0) >> 4;
 
 	if(V[Vx] !=  V[Vy])
+		pc += 4;
+	else
 		pc += 2;
+	
 }
 
 void Chip::OP_Annn()
@@ -199,62 +231,63 @@ void Chip::OP_Annn()
 	uint16_t address = opcode & 0x0FFF;
 
 	I = address;
+	pc += 2;
 }
 
 void Chip::OP_Bnnn()
 {
-	uint16_t address = opcode & 0x0FFFu;
+	uint16_t address = opcode & 0x0FFF;
 
 	pc = V[0] + address;
 }
 
 void Chip::OP_Cxkk()
 {
-	uint8_t Vx = (opcode & 0x0F00) >> 8;
-	uint8_t byte = opcode & 0x00FF;
+	uint16_t Vx = (opcode & 0x0F00) >> 8;
+	uint16_t byte = opcode & 0x00FF;
 
-	int8_t r = rand() % 255;
+	uint16_t r = rand() % 255;
 
 	V[Vx] = r & byte;
+	pc += 2;
 }
 
 void Chip::OP_Dxyn()
 {
 	uint8_t Vx = (opcode & 0x0F00) >> 8;
 	uint8_t Vy = (opcode & 0x00F0) >> 4;
-	uint8_t h = opcode * 0x000F;
+	uint8_t h = opcode & 0x000F;
 
 	// Wrap if going beyond screen boundaries
-	uint8_t xPos = V[Vx] % 64;
-	uint8_t yPos = V[Vy] % 32;
+	uint8_t xPos = V[Vx];
+	uint8_t yPos = V[Vy];
 
 	V[0xF] = 0;
 
-	for (unsigned int row = 0; row < h; ++row)
+	for (int row = 0; row < h; row++)
 	{
-		uint8_t spriteByte = memory[I + row];
+		uint16_t spriteByte = memory[I + row];
 
-		for (unsigned int col = 0; col < 8; ++col)
+		for (int col = 0; col < 8; col++)
 		{
 			
 			uint8_t spritePixel = spriteByte & (0x80 >> col);
-			uint32_t screenPixel = graphics[(yPos + row) * 64 + (xPos + col)];
+			uint32_t screenPixel = graphics[(xPos + col+((yPos + row) * 64))];
 
-			// Sprite pixel is on
-			if (spritePixel)
+			if(spritePixel != 0)
 			{
-				// Screen pixel also on - collision
-				if (screenPixel == 0xFFFFFFFF)
+				if(screenPixel == 1)
 				{
 					V[0xF] = 1;
 				}
 
-				// Effectively XOR with the sprite pixel
-				screenPixel ^= 0xFFFFFFFF;
+				screenPixel ^= 1;
 			}
 			
 		}
 	}
+	drawFlag = true;
+	pc += 2;
 }
 
 void Chip::OP_Ex9E()
@@ -263,10 +296,15 @@ void Chip::OP_Ex9E()
 
 	uint8_t key = V[Vx];
 
-	if (keys[key])
+	if (keys[key] != 0)
+	{
+		pc += 4;
+	}
+	else
 	{
 		pc += 2;
 	}
+	
 }
 
 void Chip::OP_ExA1()
@@ -275,7 +313,11 @@ void Chip::OP_ExA1()
 
 	uint8_t key = V[Vx];
 
-	if (!keys[key])
+	if (keys[key] == 0)
+	{
+		pc += 4;
+	}
+	else
 	{
 		pc += 2;
 	}
@@ -286,6 +328,7 @@ void Chip::OP_Fx07()
 	uint8_t Vx = (opcode & 0x0F00) >> 8;
 
 	V[Vx] = delayTimer;
+	pc += 2;
 }
 
 void Chip::OP_Fx0A()
@@ -358,7 +401,7 @@ void Chip::OP_Fx0A()
 	}
 	else
 	{
-		pc -= 2;
+		pc += 2;
 	}
 }
 
@@ -367,6 +410,7 @@ void Chip::OP_Fx15()
 	uint8_t Vx = (opcode & 0x0F00) >> 8;
 
 	delayTimer = V[Vx];
+	pc += 2;
 }
 
 void Chip::OP_Fx18()
@@ -374,6 +418,7 @@ void Chip::OP_Fx18()
 	uint8_t Vx = (opcode & 0x0F00) >> 8;
 
 	soundTimer = V[Vx];
+	pc += 2;
 }
 
 void Chip::OP_Fx1E()
@@ -381,6 +426,7 @@ void Chip::OP_Fx1E()
 	uint8_t Vx = (opcode & 0x0F00) >> 8;
 
 	I += V[Vx];
+	pc += 2;
 }
 
 void Chip::OP_Fx29()
@@ -388,7 +434,8 @@ void Chip::OP_Fx29()
 	uint8_t Vx = (opcode & 0x0F00) >> 8;
 	uint8_t digit = V[Vx];
 
-	I = 0x50 + (5 * digit); // 0x50 is fontset start address
+	I = (5 * digit); // 0x50 is fontset start address
+	pc += 2;
 }
 
 void Chip::OP_Fx33()
@@ -406,16 +453,22 @@ void Chip::OP_Fx33()
 
 	// Hundreds-place
 	memory[I] = value % 10;
+
+	pc += 2;
 }
 
 void Chip::OP_Fx55()
 {
 	uint8_t Vx = (opcode & 0x0F00) >> 8;
 
-	for (uint8_t i = 0; i <= Vx; ++i)
+	for (int i = 0; i <= Vx; i++)
 	{
 		memory[I + i] = V[i];
 	}
+
+	I = Vx + 1;
+
+	pc += 2;
 }
 
 void Chip::OP_Fx65()
@@ -426,4 +479,8 @@ void Chip::OP_Fx65()
 	{
 		V[i] = memory[I + i];
 	}
+
+	I = Vx + 1;
+
+	pc += 2;
 }

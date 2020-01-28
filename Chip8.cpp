@@ -41,13 +41,19 @@ void Chip::emulateCycle()
 {
 	// fetch opcode
 	int i;
-	int opcode = memory[pc] << 8 | memory[pc + 1];
+
+
+	uint16_t one = memory[pc] << 8;
+	uint16_t two = memory[pc+1];
+	opcode = memory[pc] << 8 | memory[pc + 1]; 
+	printf("\nPC counter is %u\n", pc);
+	printf("\nOpcode is %u %u = %u \n", one, two, opcode);
 
 	switch (opcode & 0xF000)
 	{
 		case(0x0000):
 		{
-			switch(opcode & 0x000F)
+			switch(opcode & 0x00FF)
 			{
 				case 0x00E0:
 					OP_00E0();
@@ -56,7 +62,9 @@ void Chip::emulateCycle()
 					OP_00EE();
 					break;
 				default:
-					printf("\nUnknown op code: %.4X\n", opcode);
+					printf("\nUnknown 1 op code: %u \n", opcode);
+					exit(3);
+					
 			}
 			break;
 		}
@@ -114,7 +122,8 @@ void Chip::emulateCycle()
 					OP_8xyE();
 					break;
 				default:
-					printf("\n Unknown op code %4X\n", opcode);
+					printf("\n Unknown 2 op code %u \n", opcode);
+					exit(3);
 			}
 			break;
 		}
@@ -143,10 +152,11 @@ void Chip::emulateCycle()
 				case(0x00A1):
 					OP_ExA1();
 					break;
+				default:
+					printf("\n Unknown 3 op code: %u\n", opcode);
+					exit(3);
+					break;
 			}
-			default:
-				// printf("\n Unknown op code: %,4X\n", opcode);
-				exit(3);
 			break;
 		}
 		case(0xF000):
@@ -181,8 +191,8 @@ void Chip::emulateCycle()
 					OP_Fx65();
 					break;
 				default:
-					// printf("\n Unknown op code: %,4X\n", opcode);
-					printf("Error unknown opcode");
+					printf("\nError unknown opcode in Chip8.cpp %u\n", opcode);
+					exit(3);
 			}
 			break;
 		}
@@ -229,6 +239,7 @@ void updateKeyState(Chip chip)
 }
 void drawDisplay(Chip chip, sf::RenderWindow *window)
 {
+	std::ofstream ofs("test.txt", std::ofstream::out);
 	sf::RectangleShape rec(sf::Vector2f(13,13));
 	int x, y;
 	for(y = 0; y < 32; y++)
@@ -237,6 +248,11 @@ void drawDisplay(Chip chip, sf::RenderWindow *window)
 		{
 			int gfx = chip.graphics[x+(64*y)];
 
+			for(int z = 0; z < totalPixels; z++)
+			{
+				ofs << chip.graphics[z];
+			}
+			
 			if(gfx > 0)
 			{
 				rec.setPosition(float(x*13), float(y*13));
@@ -244,12 +260,14 @@ void drawDisplay(Chip chip, sf::RenderWindow *window)
 			}
 		}
 	}
+
+	ofs.close();
 }
 
 int main()
 {
 	Chip chip8;
-	bool flag = chip8.load("Airplane.ch8");
+	bool flag = chip8.load("PONG");
 
 	if(!flag)
 	{
@@ -265,6 +283,8 @@ int main()
 	
 	// limits framerate
 	window->setFramerateLimit(60);
+
+	sf::RectangleShape rec(sf::Vector2f(200,400));
 
 	// loops while window is open
 	while(window->isOpen())
@@ -284,20 +304,23 @@ int main()
 				window->close();
 			}
 		}
-
+		
 		if(clock.getElapsedTime().asSeconds() >= refreshSpeed)
 		{
 			updateKeyState(chip8);
+
 			chip8.emulateCycle();
-			if(chip8.flag)
+
+			if(chip8.drawFlag)
 			{
 				window->clear();
 				drawDisplay(chip8, window);
 				window->display();
-				chip8.flag = false;
+				chip8.drawFlag = false;	
 			}
 			clock.restart();
 		}
+		
 	}
 
 	delete window;
