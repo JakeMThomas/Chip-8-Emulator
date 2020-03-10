@@ -11,7 +11,7 @@ bool Chip::load(const char *file_path)
 	if(f == NULL)
 		return false;
 	else
-		printf("Game has successfully loaded");
+		printf("Game has successfully loaded\n");
 
 	fseek(f, 0L, SEEK_END);
 	int filesize = ftell(f);
@@ -20,8 +20,8 @@ bool Chip::load(const char *file_path)
     unsigned char *buffer=(unsigned char*)malloc(filesize);
     fread(buffer, 1, filesize, f);
     
-    for(int i=0; i < filesize; ++i){
-        this->memory[i + 512] = buffer[i];
+    for(int i=0; i < filesize; i++){
+        memory[i + 512] = buffer[i];
     }
     
     fclose(f);
@@ -35,6 +35,11 @@ void Chip::emulateCycle()
 	// fetch opcode
 	int i;
 	opcode = memory[pc] << 8 | memory[pc + 1]; 
+	FILE *fp;
+	fp = fopen("test.txt", "a+");
+	fprintf(fp,"\n %u | %u = %u\n", memory[pc] << 8, memory[pc + 1], opcode );
+	fclose(fp);
+
 
 	switch (opcode & 0xF000)
 	{
@@ -255,13 +260,13 @@ int main()
 	}
 
 	// loads window
-	sf::RenderWindow *window = new sf::RenderWindow(sf::VideoMode(640,320), "Chip 8");
+	sf::RenderWindow *window = new sf::RenderWindow(sf::VideoMode(1280,720), "Chip 8");
 
 	// limits framerate
 	window->setFramerateLimit(60);
 
 	sf::Clock clock;
-	static float refreshSpeed = 1.f/60.f;
+	static float refreshSpeed = 1.f/180.f;
 	
 	// loops while window is open
 	while(window->isOpen())
@@ -293,8 +298,8 @@ int main()
 				window->clear();
 
 				drawDisplay(chip8, window);
-				for(int z = 0; z < 2048; z++)
-					printf(" %u ", chip8.graphics[z]);
+				// for(int z = 0; z < 2048; z++)
+				// 	printf(" %u ", chip8.graphics[z]);
 				window->display();
 				chip8.drawFlag = false;	
 			}

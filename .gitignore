@@ -1,7 +1,2 @@
-Chip8.o
-opcode.opcode
+.vscode/*
 sfml-app
-Airplane.ch8
-Cave.ch8
-opcode.opcode
-test.txt
