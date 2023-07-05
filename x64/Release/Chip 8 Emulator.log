@@ -1,0 +1,5 @@
+﻿  Chip8.cpp
+  opcode.cpp
+  Generating Code...
+Chip8.obj : error LNK2001: unresolved external symbol "public: static class sf::RenderStates const sf::RenderStates::Default" (?Default@RenderStates@sf@@2V12@B)
+C:\repos\Chip-8-Emulator\x64\Release\Chip 8 Emulator.exe : fatal error LNK1120: 1 unresolved externals
