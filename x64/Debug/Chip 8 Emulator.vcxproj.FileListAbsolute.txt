@@ -1,0 +1,22 @@
+C:\repos\Chip-8-Emulator\x64\Debug\Chip 8 Emulator.exe
+C:\repos\Chip-8-Emulator\x64\Debug\sfml-graphics-d-2.dll
+C:\repos\Chip-8-Emulator\x64\Debug\sfml-window-d-2.dll
+C:\repos\Chip-8-Emulator\x64\Debug\sfml-system-d-2.dll
+C:\repos\Chip-8-Emulator\x64\Debug\freetyped.dll
+C:\repos\Chip-8-Emulator\x64\Debug\zlibd1.dll
+C:\repos\Chip-8-Emulator\x64\Debug\bz2d.dll
+C:\repos\Chip-8-Emulator\x64\Debug\libpng16d.dll
+C:\repos\Chip-8-Emulator\x64\Debug\brotlidec.dll
+C:\repos\Chip-8-Emulator\x64\Debug\brotlicommon.dll
+C:\repos\Chip-8-Emulator\x64\Debug\Chip 8 Emulator.vcxproj.CopyComplete
+C:\Users\Jacob\source\repos\Chip-8-Emulator\x64\Debug\Chip 8 Emulator.exe
+C:\Users\Jacob\source\repos\Chip-8-Emulator\x64\Debug\sfml-graphics-d-2.dll
+C:\Users\Jacob\source\repos\Chip-8-Emulator\x64\Debug\sfml-window-d-2.dll
+C:\Users\Jacob\source\repos\Chip-8-Emulator\x64\Debug\sfml-system-d-2.dll
+C:\Users\Jacob\source\repos\Chip-8-Emulator\x64\Debug\freetyped.dll
+C:\Users\Jacob\source\repos\Chip-8-Emulator\x64\Debug\zlibd1.dll
+C:\Users\Jacob\source\repos\Chip-8-Emulator\x64\Debug\bz2d.dll
+C:\Users\Jacob\source\repos\Chip-8-Emulator\x64\Debug\libpng16d.dll
+C:\Users\Jacob\source\repos\Chip-8-Emulator\x64\Debug\brotlidec.dll
+C:\Users\Jacob\source\repos\Chip-8-Emulator\x64\Debug\brotlicommon.dll
+C:\Users\Jacob\source\repos\Chip-8-Emulator\x64\Debug\Chip 8 Emulator.vcxproj.CopyComplete
